@@ -76,6 +76,6 @@
 #define SOCKS_RESP      0xCE
 
 BOOL TaskCheckin(PPARSER checkinResponseData);
-VOID TaskRoutine();
+BOOL TaskRoutine();
 
 #endif //TASK_H

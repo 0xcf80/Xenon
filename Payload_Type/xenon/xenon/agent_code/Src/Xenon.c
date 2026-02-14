@@ -206,12 +206,15 @@ VOID XenonMain()
         return;
     }
     
-
+    BOOL exit = FALSE; 
     // Main beaconing loop
     while (TRUE)
     {
 
-        TaskRoutine();
+        exit = TaskRoutine();
+        if (exit) {
+            break; // just silently quit
+        }
 
     }
 }

